@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HydroLip - Hidratante Labial com Vaselina</title>
+    <meta name="description" content="HydroLip é um hidratante labial feito com vaselina que protege os lábios contra ressecamento. Preço: R$ 25,00">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1a1a1a",
+                        secondary: "#333333",
+                        accent: "#d4a574",
+                        "pink-light": "#f8d7da",
+                        "pink-warm": "#e6b8b8",
+                        "red-vibrant": "#dc3545",
+                        "wine-deep": "#8b0000",
+                        "brown-rich": "#5d4037"
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .product-hotspot {
+            position: absolute; width: 24px; height: 24px; border-radius: 50%;
+            background: rgba(212, 165, 116, 0.8); cursor: pointer; transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;
+        }
+        .product-hotspot:hover {
+            background: rgba(212, 165, 116, 1); transform: scale(1.2);
+        }
+        .hotspot-tooltip {
+            position: absolute; background: white; border: 1px solid #e5e7eb;
+            border-radius: 8px; padding: 12px; width: 200px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 50;
+        }
+        .hotspot-tooltip.active {
+            opacity: 1; visibility: visible;
+        }
+        .product-variation-card {
+            transition: all 0.3s ease;
+        }
+        .product-variation-card:hover {
+            transform: translateY(-4px); box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+        }
+        
+        #cart-items::-webkit-scrollbar {
+            width: 6px;
+        }
+        #cart-items::-webkit-scrollbar-thumb {
+            background-color: #e5e7eb;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-white font-sans text-gray-800">
+
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-sm border-b">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-accent rounded-full"></div>
+                    <h1 class="text-2xl font-bold tracking-tight">Hydro<span class="text-accent">Lip</span></h1>
+                </div>
+                <ul id="nav-list" class="hidden md:flex space-x-8"></ul>
+                <div class="flex items-center space-x-4">
+                    <button id="cart-btn" class="relative hover:text-accent transition">
+                        <i class="fas fa-shopping-bag text-xl"></i>
+                        <span id="cart-badge" class="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    </button>
+                    <a href="#home" class="bg-primary text-white px-6 py-2 rounded-full hover:bg-secondary transition hidden sm:block">Comprar</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="py-12 md:py-20">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-10 md:mb-0">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-4">Hydro<span class="text-accent">Lip</span></h2>
+                        <h3 id="current-product-name" class="text-xl text-accent font-semibold mb-2">Escolha uma variação abaixo</h3>
+                        <p class="text-xl text-gray-600 mb-6">Hidratante Labial com Vaselina</p>
+                        <p class="text-lg text-gray-700 mb-8 max-w-lg">
+                            O HydroLip é um hidratante labial feito a partir da vaselina, um derivado do petróleo que ajuda a proteger e hidratar os lábios.
+                        </p>
+                        <div class="flex items-center space-x-6">
+                            <div class="text-3xl font-bold">R$ 25,00</div>
+                            <button id="add-to-cart-btn" class="bg-accent text-white px-8 py-3 rounded-full hover:bg-opacity-90 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">Adicionar ao Carrinho</button>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 relative">
+                        <div class="relative mx-auto max-w-md">
+                            <img id="product-image" src="tudo.jpeg" alt="HydroLip - Hidratante Labial" class="rounded-2xl shadow-xl w-full object-cover aspect-square">
+                            <div id="hotspot-container" class="absolute inset-0"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="variations" class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">Variações do Produto</h2>
+                <div id="variations-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6"></div>
+            </div>
+        </section>
+
+        <section id="process" class="py-16">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">Como o Produto é Feito</h2>
+                <div id="process-steps" class="grid grid-cols-1 md:grid-cols-5 gap-8"></div>
+            </div>
+        </section>
+
+        <section id="benefits" class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">Benefícios do Hidratante</h2>
+                <div id="benefits-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+            </div>
+        </section>
+
+        <section id="details" class="py-16">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-3xl font-bold text-center mb-12">Detalhes do Produto</h2>
+                    <div class="bg-white rounded-2xl shadow-lg p-8">
+                        <p class="text-lg text-gray-700 mb-6">
+                            O HydroLip combina a eficácia da vaselina com ingredientes cuidadosamente selecionados para oferecer hidratação profunda e proteção duradoura.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="text-xl font-semibold mb-4">Composição Principal</h3>
+                                <ul class="space-y-2">
+                                    <li class="flex items-center"><i class="fas fa-check text-accent mr-3"></i> Vaselina (Petrolato) - 85%</li>
+                                    <li class="flex items-center"><i class="fas fa-check text-accent mr-3"></i> Óleos Naturais - 10%</li>
+                                    <li class="flex items-center"><i class="fas fa-check text-accent mr-3"></i> Vitamina E - 3%</li>
+                                    <li class="flex items-center"><i class="fas fa-check text-accent mr-3"></i> Fragrância Natural - 2%</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-4">Especificações</h3>
+                                <ul class="space-y-2">
+                                    <li class="flex items-center"><i class="fas fa-weight text-gray-400 mr-3"></i> Peso: 15g</li>
+                                    <li class="flex items-center"><i class="fas fa-ruler-vertical text-gray-400 mr-3"></i> Altura: 7cm</li>
+                                    <li class="flex items-center"><i class="fas fa-temperature-low text-gray-400 mr-3"></i> Resistente a temperaturas de -10°C a 40°C</li>
+                                    <li class="flex items-center"><i class="fas fa-calendar-alt text-gray-400 mr-3"></i> Validade: 24 meses após abertura</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-primary text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-8 md:mb-0">
+                    <h3 class="text-2xl font-bold mb-4">Hydro<span class="text-accent">Lip</span></h3>
+                    <p class="text-gray-300">Hidratante labial com vaselina</p>
+                </div>
+                <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8">
+                    <div>
+                        <h4 class="font-semibold mb-3">Contato</h4>
+                        <p class="text-gray-300">hydrolip@gmail.com</p>
+                        <p class="text-gray-300">(12) 99247-6352</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-3">Informações</h4>
+                        <ul id="footer-links" class="space-y-2"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2026 HydroLip. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="cart-overlay" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity duration-300 opacity-0"></div>
+    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white z-50 transform translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
+        <div class="p-6 flex justify-between items-center border-b">
+            <h2 class="text-2xl font-bold flex items-center gap-2">
+                <i class="fas fa-shopping-cart text-accent"></i> Seu Carrinho
+            </h2>
+            <button id="close-cart-btn" class="text-gray-500 hover:text-red-500 transition">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+        
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
+            </div>
+
+        <div class="p-6 border-t bg-white">
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-lg font-semibold text-gray-600">Total:</span>
+                <span id="cart-total" class="text-3xl font-bold text-accent">R$ 0,00</span>
+            </div>
+            <button id="checkout-btn" class="w-full bg-primary text-white py-4 rounded-xl hover:bg-secondary transition font-bold text-lg flex justify-center items-center gap-2">
+                <i class="fas fa-lock text-sm"></i> Finalizar Compra
+            </button>
+            <button id="continue-shopping" class="w-full text-center mt-4 text-gray-500 hover:text-accent font-medium text-sm transition">
+                Continuar comprando
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const navigationItems = [
+            { "label": "Início", "href": "#home" },
+            { "label": "Variações", "href": "#variations" },
+            { "label": "Como é Feito", "href": "#process" },
+            { "label": "Benefícios", "href": "#benefits" },
+            { "label": "Detalhes", "href": "#details" }
+        ];
+        
+        const productVariations = [
+            { "id": "fitinha", "name": "Fitinha", "description": "Rosa delicado e translúcido; o toque de brilho mais natural.", "color": "pink-light", "image": "rosa3.jpeg" },
+            { "id": "fim-de-tarde", "name": "Fim de Tarde", "description": "Rosado quente amendoado; um nude sofisticado e sóbrio.", "color": "pink-warm", "image": "rosa2.jpeg" },
+            { "id": "beijo-roubado", "name": "Beijo Roubado", "description": "Vermelho rosado vibrante; cor intensa para destacar o rosto.", "color": "red-vibrant", "image": "rosa1.jpeg" },
+            { "id": "boca-de-vinho", "name": "Boca de Vinho", "description": "Vinho quente e intenso; profundo, dramático e elegante.", "color": "wine-deep", "image": "vinho.jpeg" },
+            { "id": "cafe-depois-das-18h", "name": "Café depois das 18h", "description": "Marrom rico e cremoso; moderno, escuro e encorpado.", "color": "brown-rich", "image": "marrom.jpeg" }
+        ];
+
+        const processSteps = [
+            { "step": "1", "title": "Extração do Petróleo", "description": "O processo começa com a extração do petróleo bruto de reservas naturais.", "icon": "fas fa-oil-can" },
+            { "step": "2", "title": "Refinamento na Indústria", "description": "O petróleo passa por processos de refinamento para obter derivados purificados.", "icon": "fas fa-industry" },
+            { "step": "3", "title": "Produção da Vaselina", "description": "A vaselina (petrolato) é produzida através de processos específicos de refino.", "icon": "fas fa-flask" },
+            { "step": "4", "title": "Mistura com Essência", "description": "A vaselina é misturada com essências naturais e ingredientes hidratantes.", "icon": "fas fa-mortar-pestle" },
+            { "step": "5", "title": "Embalagem", "description": "O produto final é embalado em recipientes estéreis e seguros.", "icon": "fas fa-box" }
+        ];
+
+        const benefits = [
+            { "title": "Hidrata os Lábios", "description": "Proporciona hidratação profunda e duradoura por até 8 horas.", "icon": "fas fa-tint" },
+            { "title": "Protege contra Ressecamento", "description": "Forma uma barreira protetora que previne o ressecamento.", "icon": "fas fa-shield-alt" },
+            { "title": "Evita Rachaduras", "description": "Mantém os lábios macios e evita rachaduras dolorosas.", "icon": "fas fa-ban" },
+            { "title": "Dá Brilho aos Lábios", "description": "Proporciona um brilho natural e saudável aos lábios.", "icon": "fas fa-star" }
+        ];
+
+        const productHotspots = [
+            { "id": "hotspot-1", "top": "30%", "left": "40%", "title": "Vaselina Pura", "content": "Contém 85% de vaselina pura, derivada do petróleo, que forma uma barreira oclusiva para reter a umidade." },
+            { "id": "hotspot-2", "top": "50%", "left": "60%", "title": "Embalagem Hermética", "content": "Embalagem com vedação completa que protege o produto da contaminação e evita vazamentos." },
+            { "id": "hotspot-3", "top": "70%", "left": "30%", "title": "Aplicador Suave", "content": "Aplicador de silicone macio que desliza suavemente sem irritar os lábios sensíveis." },
+            { "id": "hotspot-4", "top": "45%", "left": "20%", "title": "Fórmula Não-Comedogênica", "content": "Fórmula que não obstrui os poros, ideal para uso diário e para todos os tipos de pele." }
+        ];
+
+        const footerLinks = [
+            { "label": "Política de Privacidade", "href": "#privacy" },
+            { "label": "Termos de Uso", "href": "#terms" },
+            { "label": "FAQ", "href": "#faq" },
+            { "label": "Contato", "href": "#contact" }
+        ];
+
+        // LÓGICA DO CARRINHO DE COMPRAS
+        let cart = [];
+        const basePrice = 25.00;
+        
+        // Alterado aqui: O produto ativo começa como null (vazio)
+        let currentActiveProduct = null;
+
+        function renderNavItems(items) {
+            return items.map(item => `<li><a href="${item.href}" class="text-gray-700 hover:text-accent font-medium transition-colors">${item.label}</a></li>`).join("");
+        }
+
+        function renderProductVariations(items) {
+            return items.map(item => `
+                <div class="product-variation-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer border-2 border-transparent hover:border-accent" data-variation="${item.id}">
+                    <div class="h-48 overflow-hidden bg-gray-100">
+                        <img src="${item.image}" alt="${item.name} - HydroLip" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" onerror="this.src='https://via.placeholder.com/400x400?text=HydroLip'">
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center mb-2">
+                            <div class="w-6 h-6 rounded-full bg-${item.color} mr-3 shadow-sm border border-gray-200"></div>
+                            <h3 class="font-bold text-lg">${item.name}</h3>
+                        </div>
+                        <p class="text-gray-600 text-sm">${item.description}</p>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function renderProcessSteps(items) {
+            return items.map(item => `
+                <div class="text-center group">
+                    <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                        <i class="${item.icon} text-white text-2xl"></i>
+                    </div>
+                    <div class="text-2xl font-bold text-accent mb-2">${item.step}</div>
+                    <h3 class="font-bold text-lg mb-2">${item.title}</h3>
+                    <p class="text-gray-600">${item.description}</p>
+                </div>
+            `).join("");
+        }
+
+        function renderBenefits(items) {
+            return items.map(item => `
+                <div class="text-center bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition">
+                    <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="${item.icon} text-accent text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">${item.title}</h3>
+                    <p class="text-gray-600">${item.description}</p>
+                </div>
+            `).join("");
+        }
+
+        function renderFooterLinks(items) {
+            return items.map(item => `<li><a href="${item.href}" class="text-gray-300 hover:text-accent transition-colors">${item.label}</a></li>`).join("");
+        }
+
+        function renderProductHotspots(items) {
+            return items.map(item => `
+                <div class="product-hotspot" style="top: ${item.top}; left: ${item.left};" data-title="${item.title}" data-content="${item.content}">
+                    <i class="fas fa-plus"></i>
+                    <div class="hotspot-tooltip" style="top: 30px; left: 0;">
+                        <h4 class="font-bold mb-2 text-gray-800">${item.title}</h4>
+                        <p class="text-sm text-gray-600">${item.content}</p>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        // Funções Globais do Carrinho
+        window.updateQuantity = function(index, change) {
+            if (cart[index].quantity + change > 0) {
+                cart[index].quantity += change;
+            } else {
+                cart.splice(index, 1);
+            }
+            updateCartUI();
+        };
+
+        window.removeItem = function(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        };
+
+        function updateCartUI() {
+            const cartItemsContainer = document.getElementById("cart-items");
+            const cartTotalEl = document.getElementById("cart-total");
+            const cartBadge = document.getElementById("cart-badge");
+
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            cartBadge.textContent = totalItems;
+            cartBadge.classList.add('scale-150');
+            setTimeout(() => cartBadge.classList.remove('scale-150'), 200);
+
+            cartTotalEl.textContent = `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-gray-400 mt-10">
+                        <i class="fas fa-shopping-basket text-5xl mb-4"></i>
+                        <p class="text-lg">Seu carrinho está vazio.</p>
+                        <p class="text-sm mt-2">Adicione produtos para continuar.</p>
+                    </div>
+                `;
+            } else {
+                cartItemsContainer.innerHTML = cart.map((item, index) => `
+                    <div class="flex items-center gap-4 bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+                        <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-lg border" onerror="this.src='https://via.placeholder.com/150'">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-800 text-sm md:text-base leading-tight">${item.name}</h4>
+                            <p class="text-accent font-semibold text-sm mt-1">R$ ${(item.price * item.quantity).toFixed(2).replace('.', ',')}</p>
+                            
+                            <div class="flex items-center mt-2 bg-gray-50 border rounded-lg w-fit overflow-hidden">
+                                <button class="px-3 py-1 text-gray-600 hover:bg-gray-200 hover:text-primary transition" onclick="updateQuantity(${index}, -1)">
+                                    <i class="fas fa-minus text-xs"></i>
+                                </button>
+                                <span class="px-3 font-medium text-sm w-8 text-center">${item.quantity}</span>
+                                <button class="px-3 py-1 text-gray-600 hover:bg-gray-200 hover:text-primary transition" onclick="updateQuantity(${index}, 1)">
+                                    <i class="fas fa-plus text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button onclick="removeItem(${index})" class="text-red-400 hover:text-red-600 hover:bg-red-50 p-3 rounded-full transition" title="Remover item">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("nav-list").innerHTML = renderNavItems(navigationItems);
+            document.getElementById("variations-grid").innerHTML = renderProductVariations(productVariations);
+            document.getElementById("process-steps").innerHTML = renderProcessSteps(processSteps);
+            document.getElementById("benefits-grid").innerHTML = renderBenefits(benefits);
+            document.getElementById("footer-links").innerHTML = renderFooterLinks(footerLinks);
+            document.getElementById("hotspot-container").innerHTML = renderProductHotspots(productHotspots);
+
+            updateCartUI(); 
+
+            const attachHotspotEvents = () => {
+                const hotspots = document.querySelectorAll(".product-hotspot");
+                hotspots.forEach(hotspot => {
+                    hotspot.addEventListener("mouseenter", function() {
+                        this.querySelector(".hotspot-tooltip").classList.add("active");
+                    });
+                    hotspot.addEventListener("mouseleave", function() {
+                        this.querySelector(".hotspot-tooltip").classList.remove("active");
+                    });
+                });
+            };
+            attachHotspotEvents();
+
+            const variationCards = document.querySelectorAll(".product-variation-card");
+            variationCards.forEach(card => {
+                card.addEventListener("click", function() {
+                    const variationId = this.getAttribute("data-variation");
+                    const variation = productVariations.find(v => v.id === variationId);
+                    
+                    if (variation) {
+                        document.getElementById("product-image").src = variation.image;
+                        document.getElementById("current-product-name").textContent = variation.name;
+                        
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                        
+                        currentActiveProduct = {
+                            id: variation.id,
+                            name: variation.name,
+                            image: variation.image,
+                            price: basePrice
+                        };
+
+                        document.getElementById("hotspot-container").innerHTML = renderProductHotspots(productHotspots);
+                        attachHotspotEvents();
+                    }
+                });
+            });
+
+            document.addEventListener("click", function(event) {
+                const link = event.target.closest("a[href^='#']");
+                if (!link) return;
+                event.preventDefault();
+                
+                const targetId = link.getAttribute("href");
+                if (targetId === "#home") {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                } else {
+                    const target = document.querySelector(targetId);
+                    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+            });
+
+            const cartOverlay = document.getElementById("cart-overlay");
+            const cartSidebar = document.getElementById("cart-sidebar");
+            const closeCartBtn = document.getElementById("close-cart-btn");
+            const cartBtn = document.getElementById("cart-btn");
+            const continueShoppingBtn = document.getElementById("continue-shopping");
+
+            const openCart = () => {
+                cartOverlay.classList.remove("hidden");
+                setTimeout(() => {
+                    cartOverlay.classList.remove("opacity-0");
+                    cartSidebar.classList.remove("translate-x-full");
+                }, 10);
+            };
+
+            const closeCart = () => {
+                cartSidebar.classList.add("translate-x-full");
+                cartOverlay.classList.add("opacity-0");
+                setTimeout(() => {
+                    cartOverlay.classList.add("hidden");
+                }, 300);
+            };
+
+            cartBtn.addEventListener("click", openCart);
+            closeCartBtn.addEventListener("click", closeCart);
+            cartOverlay.addEventListener("click", closeCart);
+            continueShoppingBtn.addEventListener("click", closeCart);
+
+            const addToCartBtn = document.getElementById("add-to-cart-btn");
+            
+            // Alterado aqui: Adicionada a validação para bloquear a compra sem escolher cor
+            addToCartBtn.addEventListener("click", function() {
+                if (!currentActiveProduct) {
+                    alert("Por favor, selecione uma variação/cor do produto abaixo antes de adicionar ao carrinho!");
+                    const variationsSection = document.getElementById("variations");
+                    variationsSection.scrollIntoView({ behavior: "smooth", block: "center" });
+                    
+                    // Pequeno efeito visual para chamar atenção para as variações
+                    setTimeout(() => {
+                        variationsSection.classList.add("bg-gray-200");
+                        setTimeout(() => variationsSection.classList.remove("bg-gray-200"), 500);
+                    }, 500);
+                    
+                    return;
+                }
+
+                const existingItemIndex = cart.findIndex(item => item.id === currentActiveProduct.id);
+                
+                if (existingItemIndex > -1) {
+                    cart[existingItemIndex].quantity += 1;
+                } else {
+                    cart.push({ ...currentActiveProduct, quantity: 1 });
+                }
+                
+                updateCartUI();
+                openCart(); 
+
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
+                this.classList.remove("bg-accent");
+                this.classList.add("bg-green-500");
+                
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.classList.remove("bg-green-500");
+                    this.classList.add("bg-accent");
+                }, 2000);
+            });
+
+            const checkoutBtn = document.getElementById("checkout-btn");
+            checkoutBtn.addEventListener("click", function() {
+                if (cart.length === 0) {
+                    alert("Seu carrinho está vazio! Adicione alguns produtos antes de finalizar.");
+                    return;
+                }
+                
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+                
+                setTimeout(() => {
+                    alert("Pedido processado com sucesso! 🎉\nObrigado por comprar na HydroLip.");
+                    cart = [];
+                    updateCartUI();
+                    closeCart();
+                    this.innerHTML = originalText;
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html>
